@@ -134,3 +134,36 @@ sudo systemctl restart empowerd
 ```
 journalctl -u empowerd -f -o cat
 ```
+# Sadece port değiştirmek isteyenler
+
+# Port Atama (izmir ayarladım isteyen 35 değiştirsin)
+```
+echo "export EMPOWERCHAİN_PORT="35"" >> $HOME/.bash_profile
+source $HOME/.bash_profile
+```
+```
+systemctl stop empowerd
+```
+```
+# Port app.toml ayarlaması
+sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}317\"%;
+s%^address = \":8080\"%address = \":${EMPOWERCHAİN_PORT}080\"%;
+s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${EMPOWERCHAİN_PORT}090\"%; 
+s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${EMPOWERCHAİN_PORT}091\"%; 
+s%^address = \"0.0.0.0:8545\"%address = \"0.0.0.0:${EMPOWERCHAİN_PORT}545\"%; 
+s%^ws-address = \"0.0.0.0:8546\"%ws-address = \"0.0.0.0:${EMPOWERCHAİN_PORT}546\"%" $HOME/.empowerchain/config/app.toml
+```
+```
+# Ports config.toml ayarlaması
+sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${EMPOWERCHAİN_PORT}658\"%; 
+s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}657\"%; 
+s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${EMPOWERCHAİN_PORT}060\"%;
+s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}656\"%;
+s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWERCHAİN_PORT}656\"%;
+s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWERCHAİN_PORT}660\"%" $HOME/.empowerchain/config/config.toml
+```
+```
+sudo systemctl daemon-reload
+sudo systemctl restart empowerd
+journalctl -u empowerd -f -o cat
+```
