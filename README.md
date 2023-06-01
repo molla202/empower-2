@@ -46,7 +46,7 @@ cd chain
 make install
 ```
 
-<h1 align="center"> Genesis, addrbook ve servis (port ayarlaması var isteyen değiştirsin 35 ayarlı)</h1>
+<h1 align="center"> Genesis, addrbook ve servis (port ayarlaması var isteyen değiştirsin 35 ayarlı- monilker isminide değiştiriniz test olanı)</h1>
 
 ```sh
 # Orjinal dökümasyonda genesis URL'ler yok, manuel ekliyorum:
