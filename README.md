@@ -73,7 +73,8 @@ s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${EMPOWERCHAİN_PO
 s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}656\"%;
 s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWERCHAİN_PORT}656\"%;
 s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWERCHAİN_PORT}660\"%" $HOME/.empowerchain/config/config.toml
-
+```
+```
 # Servis dosyası:
 sudo tee /etc/systemd/system/empowerd.service > /dev/null <<EOF
 [Unit]
@@ -88,7 +89,8 @@ LimitNOFILE=65535
 [Install]
 WantedBy=multi-user.target
 EOF
-
+```
+```
 # Resetleme ve başlatma
 sudo systemctl daemon-reload
 sudo systemctl enable empowerd
