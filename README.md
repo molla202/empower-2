@@ -54,7 +54,8 @@ curl -Ls https://ss-t.empower.nodestake.top/genesis.json > $HOME/.empowerchain/c
 
 curl -Ls https://ss-t.empower.nodestake.top/addrbook.json > $HOME/.empowerchain/config/addrbook.json
 
-# Port Atama (izmir ayarladım isteyen 35 değiştirsin)
+# Port Atama (izmir ayarladım isteyen 35 değiştirsin- moniker adınızı değiştirin test olanı değiştirceniz)
+echo "export MONIKER="test"" >> $HOME/.bash_profile
 echo "export EMPOWERCHAİN_PORT="35"" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
