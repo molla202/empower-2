@@ -111,13 +111,13 @@ empowerd keys add cüzdan-adı --recover    (import etmek için)
 ```
 empowerd tx staking create-validator \
   --amount 1000000umpwr \
-  --from wallet \
+  --from cüzdan-adı \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
   --commission-rate "0.1" \
   --min-self-delegation "1" \
   --pubkey  $(empowerd tendermint show-validator) \
-  --moniker $MONIKER \
+  --moniker node-adı \
   --website "websiteniz"
   --identity keybase.io idniz \
   --details "Core Node Community" \
