@@ -84,7 +84,14 @@ s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWERD_PORT}656\"
 s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWERD_PORT}656\"%;
 s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWERD_PORT}660\"%" $HOME/.empowerchain/config/config.toml
 ```
-
+# seed peer ve gas ayarları
+```
+seeds="d6a7cd9fa2bafc0087cb606de1d6d71216695c25@51.159.161.174:26656"
+peers="e8b3fa38a15c426e046dd42a41b8df65047e03d5@95.217.144.107:26656,89ea54a37cd5a641e44e0cee8426b8cc2c8e5dfb@51.159.141.221:26656,0747860035271d8f088106814a4d0781eb7b2bc7@142.132.203.60:27656,3c758d8e37748dc692621a0d59b454bacb69b501@65.108.224.156:26656,41b97fced48681273001692d3601cd4024ceba59@5.9.147.185:26656"
+sed -i -e 's|^seeds *=.*|seeds = "'$seeds'"|; s|^persistent_peers *=.*|persistent_peers = "'$peers'"|' $HOME/.empowerchain/config/config.toml
+sed -i 's/max_num_inbound_peers =.*/max_num_inbound_peers = 50/g' $HOME/.empowerchain/config/config.toml
+sed -i 's/max_num_outbound_peers =.*/max_num_outbound_peers = 50/g' $HOME/.empowerchain/config/config.toml
+```
 ```
 # Servis dosyası:
 sudo tee /etc/systemd/system/empowerd.service > /dev/null <<EOF
