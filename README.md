@@ -45,7 +45,19 @@ cd chain
 
 make install
 ```
-
+```
+# Port Atama (izmir ayarladım isteyen 35 değiştirsin- moniker adınızı değiştirin test olanı değiştirceniz)
+echo "export MONIKER="test"" >> $HOME/.bash_profile
+echo "export EMPOWERD_PORT="35"" >> $HOME/.bash_profile
+source $HOME/.bash_profile
+```
+```
+# config and init app işlemini yapalım
+empowerd config chain-id circulus-1
+empowerd config keyring-backend test
+empowerd config node tcp://localhost:${EMPOWERD_PORT}057
+empowerd init $MONIKER --chain-id circulus-1
+```
 <h1 align="center"> Genesis, addrbook ve servis (port ayarlaması var isteyen değiştirsin 35 ayarlı- monilker isminide değiştiriniz test olanı)</h1>
 
 ```sh
@@ -54,34 +66,25 @@ curl -Ls https://ss-t.empower.nodestake.top/genesis.json > $HOME/.empowerchain/c
 
 curl -Ls https://ss-t.empower.nodestake.top/addrbook.json > $HOME/.empowerchain/config/addrbook.json
 
-# Port Atama (izmir ayarladım isteyen 35 değiştirsin- moniker adınızı değiştirin test olanı değiştirceniz)
-echo "export MONIKER="test"" >> $HOME/.bash_profile
-echo "export EMPOWERCHAİN_PORT="35"" >> $HOME/.bash_profile
-source $HOME/.bash_profile
+
 
 # Port app.toml ayarlaması
-sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}317\"%;
-s%^address = \":8080\"%address = \":${EMPOWERCHAİN_PORT}080\"%;
-s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${EMPOWERCHAİN_PORT}090\"%; 
-s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${EMPOWERCHAİN_PORT}091\"%; 
-s%^address = \"0.0.0.0:8545\"%address = \"0.0.0.0:${EMPOWERCHAİN_PORT}545\"%; 
-s%^ws-address = \"0.0.0.0:8546\"%ws-address = \"0.0.0.0:${EMPOWERCHAİN_PORT}546\"%" $HOME/.empowerchain/config/app.toml
+sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${EMPOWERD_PORT}317\"%;
+s%^address = \":8080\"%address = \":${EMPOWERD_PORT}080\"%;
+s%^address = \"localhost:9090\"%address = \"localhost:${EMPOWERD_PORT}090\"%; 
+s%^address = \"localhost:9091\"%address = \"localhost:${EMPOWERD_PORT}091\"%; 
+s%^address = \"localhost:8545\"%address = \"localhost:${EMPOWERD_PORT}545\"%; 
+s%^ws-address = \"localhost:8546\"%ws-address = \"localhost:${EMPOWERD_PORT}546\"%" $HOME/.empowerchain/config/app.toml
 
 # Ports config.toml ayarlaması
-sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${EMPOWERCHAİN_PORT}658\"%; 
-s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}657\"%; 
-s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${EMPOWERCHAİN_PORT}060\"%;
-s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWERCHAİN_PORT}656\"%;
-s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWERCHAİN_PORT}656\"%;
-s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWERCHAİN_PORT}660\"%" $HOME/.empowerchain/config/config.toml
+sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${EMPOWERD_PORT}658\"%; 
+s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://0.0.0.0:${EMPOWERD_PORT}657\"%; 
+s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${EMPOWERD_PORT}060\"%;
+s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWERD_PORT}656\"%;
+s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWERD_PORT}656\"%;
+s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWERD_PORT}660\"%" $HOME/.empowerchain/config/config.toml
 ```
-# config and init app işlemini yapalım
-```
-empowerd config chain-id circulus-1
-empowerd config keyring-backend test
-empowerd config node tcp://localhost:${EMPOWERCHAİN_PORT}057
-empowerd init $MONIKER --chain-id circulus-1
-```
+
 ```
 # Servis dosyası:
 sudo tee /etc/systemd/system/empowerd.service > /dev/null <<EOF
