@@ -6,129 +6,119 @@
 
 <h1 align="center"> Donanım </h1>
 
-```sh
+
 # Sistem
 4 CPU
 8 RAM
 200 SSD
 ```
-
-<h1 align="center"> Güncelleme </h1>
-
-```
-sudo apt update && sudo apt upgrade -y && \
-sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bsdmainutils git make ncdu gcc git jq chrony liblz4-tool -y
+# kütüphane kurulumu
+sudo apt update && sudo apt upgrade -y
+sudo apt install curl git wget htop tmux build-essential jq make lz4 gcc unzip -y
 ```
 
-<h1 align="center"> Go kurulumu </h1>
 
-```sh
+```
+# install go, if needed
 cd $HOME
+! [ -x "$(command -v go)" ] && {
+VER="1.20.3"
+wget "https://golang.org/dl/go$VER.linux-amd64.tar.gz"
 sudo rm -rf /usr/local/go
-wget https://golang.org/dl/go1.20.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
-export PATH=/usr/local/go/bin:$PATH
+sudo tar -C /usr/local -xzf "go$VER.linux-amd64.tar.gz"
+rm "go$VER.linux-amd64.tar.gz"
+[ ! -f ~/.bash_profile ] && touch ~/.bash_profile
+echo "export PATH=$PATH:/usr/local/go/bin:~/go/bin" >> ~/.bash_profile
+source $HOME/.bash_profile
+}
+[ ! -d ~/go/bin ] && mkdir -p ~/go/bin
 
-# go version 1.20 olmak zorunda yoksa hata alırsınız
-go version
-```
+# set vars ( WALLET VE MONİKER KISMINI DEĞİŞTİRİNİZ )
+echo "export WALLET="wallet"" >> $HOME/.bash_profile
+echo "export MONIKER="test"" >> $HOME/.bash_profile
+echo "export EMPOWER_CHAIN_ID="circulus-1"" >> $HOME/.bash_profile
+echo "export EMPOWER_PORT="16"" >> $HOME/.bash_profile
+source $HOME/.bash_profile
 
-<h1 align="center"> Binary </h1>
-
-```sh 
+# download binary
 cd $HOME
 rm -rf empowerchain
-
 git clone https://github.com/EmpowerPlastic/empowerchain
-
 cd empowerchain
+git checkout v1.0.0-rc1
 cd chain
-
 make install
-```
-```
-# Port Atama (izmir ayarladım isteyen 35 değiştirsin- moniker adınızı değiştirin test olanı değiştirceniz)
-echo "export MONIKER="test"" >> $HOME/.bash_profile
-echo "export EMPOWERD_PORT="35"" >> $HOME/.bash_profile
-source $HOME/.bash_profile
-```
-```
-# config and init app işlemini yapalım
+
+# config and init app
+empowerd config node tcp://localhost:${EMPOWER_PORT}657
+empowerd config keyring-backend os
 empowerd config chain-id circulus-1
-empowerd config keyring-backend test
-empowerd config node tcp://localhost:${EMPOWERD_PORT}057
-empowerd init $MONIKER --chain-id circulus-1
-```
-<h1 align="center"> Genesis, addrbook ve servis (port ayarlaması var isteyen değiştirsin 35 ayarlı- monilker isminide değiştiriniz test olanı)</h1>
+empowerd init "test" --chain-id circulus-1
 
-```sh
-# Orjinal dökümasyonda genesis URL'ler yok, manuel ekliyorum:
-curl -Ls https://ss-t.empower.nodestake.top/genesis.json > $HOME/.empowerchain/config/genesis.json 
+# download genesis and addrbook
+wget -O $HOME/.empowerchain/config/genesis.json https://testnet-files.itrocket.net/empower/genesis.json
+wget -O $HOME/.empowerchain/config/addrbook.json https://testnet-files.itrocket.net/empower/addrbook.json
 
-curl -Ls https://ss-t.empower.nodestake.top/addrbook.json > $HOME/.empowerchain/config/addrbook.json
+# set seeds and peers
+SEEDS="c597ec01e412d6e0f62c6f5501224b7fb8393912@empower-testnet-seed.itrocket.net:16656"
+PEERS="c413d3d16e250ddbd8f8d495204b2de46ef36b63@empower-testnet-peer.itrocket.net:16656"
+sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.empowerchain/config/config.toml
 
+# set custom ports in app.toml
+sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${EMPOWER_PORT}317\"%;
+s%^address = \":8080\"%address = \":${EMPOWER_PORT}080\"%;
+s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${EMPOWER_PORT}090\"%; 
+s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${EMPOWER_PORT}091\"%; 
+s%^address = \"0.0.0.0:8545\"%address = \"0.0.0.0:${EMPOWER_PORT}545\"%; 
+s%^ws-address = \"0.0.0.0:8546\"%ws-address = \"0.0.0.0:${EMPOWER_PORT}546\"%" $HOME/.empowerchain/config/app.toml
 
+# set custom ports in config.toml file
+sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${EMPOWER_PORT}658\"%; 
+s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://0.0.0.0:${EMPOWER_PORT}657\"%; 
+s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${EMPOWER_PORT}060\"%;
+s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWER_PORT}656\"%;
+s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWER_PORT}656\"%;
+s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWER_PORT}660\"%" $HOME/.empowerchain/config/config.toml
 
-# Port app.toml ayarlaması
-sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${EMPOWERD_PORT}317\"%;
-s%^address = \":8080\"%address = \":${EMPOWERD_PORT}080\"%;
-s%^address = \"localhost:9090\"%address = \"localhost:${EMPOWERD_PORT}090\"%; 
-s%^address = \"localhost:9091\"%address = \"localhost:${EMPOWERD_PORT}091\"%; 
-s%^address = \"localhost:8545\"%address = \"localhost:${EMPOWERD_PORT}545\"%; 
-s%^ws-address = \"localhost:8546\"%ws-address = \"localhost:${EMPOWERD_PORT}546\"%" $HOME/.empowerchain/config/app.toml
+# config pruning
+sed -i -e "s/^pruning *=.*/pruning = \"nothing\"/" $HOME/.empowerchain/config/app.toml
+sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $HOME/.empowerchain/config/app.toml
+sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"50\"/" $HOME/.empowerchain/config/app.toml
 
-# Ports config.toml ayarlaması
-sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${EMPOWERD_PORT}658\"%; 
-s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://0.0.0.0:${EMPOWERD_PORT}657\"%; 
-s%^pprof_laddr = \"localhost:6060\"%pprof_laddr = \"localhost:${EMPOWERD_PORT}060\"%;
-s%^laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${EMPOWERD_PORT}656\"%;
-s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${EMPOWERD_PORT}656\"%;
-s%^prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${EMPOWERD_PORT}660\"%" $HOME/.empowerchain/config/config.toml
-```
-# seed peer ve gas ayarları
-```
-seeds="d6a7cd9fa2bafc0087cb606de1d6d71216695c25@51.159.161.174:26656"
-peers="e8b3fa38a15c426e046dd42a41b8df65047e03d5@95.217.144.107:26656,89ea54a37cd5a641e44e0cee8426b8cc2c8e5dfb@51.159.141.221:26656,0747860035271d8f088106814a4d0781eb7b2bc7@142.132.203.60:27656,3c758d8e37748dc692621a0d59b454bacb69b501@65.108.224.156:26656,41b97fced48681273001692d3601cd4024ceba59@5.9.147.185:26656"
-sed -i -e 's|^seeds *=.*|seeds = "'$seeds'"|; s|^persistent_peers *=.*|persistent_peers = "'$peers'"|' $HOME/.empowerchain/config/config.toml
-sed -i 's/max_num_inbound_peers =.*/max_num_inbound_peers = 50/g' $HOME/.empowerchain/config/config.toml
-sed -i 's/max_num_outbound_peers =.*/max_num_outbound_peers = 50/g' $HOME/.empowerchain/config/config.toml
-sed -i.bak -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.025umpwr\"/" $HOME/.empowerchain/config/app.toml
-```
-```
-# Servis dosyası:
+# set minimum gas price, enable prometheus and disable indexing
+sed -i 's/minimum-gas-prices =.*/minimum-gas-prices = "0.0umpwr"/g' $HOME/.empowerchain/config/app.toml
+sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.empowerchain/config/config.toml
+sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.empowerchain/config/config.toml
+
+# create service file
 sudo tee /etc/systemd/system/empowerd.service > /dev/null <<EOF
 [Unit]
-Description=empowerd Daemon
+Description=Empower node
 After=network-online.target
 [Service]
 User=$USER
-ExecStart=/root/go/bin/empowerd start
-Restart=always
-RestartSec=3
+WorkingDirectory=$HOME/.empowerchain
+ExecStart=$(which empowerd) start --home $HOME/.empowerchain
+Restart=on-failure
+RestartSec=5
 LimitNOFILE=65535
 [Install]
 WantedBy=multi-user.target
 EOF
-```
-```
-# Resetleme ve başlatma
+
+# reset and download snapshot
+empowerd tendermint unsafe-reset-all --home $HOME/.empowerchain
+if curl -s --head curl https://testnet-files.itrocket.net/empower/snap_empower.tar.lz4 | head -n 1 | grep "200" > /dev/null; then
+  curl https://testnet-files.itrocket.net/empower/snap_empower.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.empowerchain
+    else
+  echo no have snap
+fi
+
+# enable and start service
 sudo systemctl daemon-reload
 sudo systemctl enable empowerd
-sudo systemctl restart empowerd
-# Log Kontrol
-journalctl -u empowerd -f -o cat
+sudo systemctl restart empowerd && sudo journalctl -u empowerd -f -o cat
 ```
-
-<h1 align="center"> Cüzdan oluşturma </h1>
-
-```sh
-# cüzdan-adı değiştirin.
-empowerd keys add cüzdan-adı
-```
-```sh
-empowerd keys add cüzdan-adı --recover    (import etmek için)
-```
-
 ### Senkronize olmayı bekleyin ardından validatör oluşturun (not: faucetin bir kaç gün içinde açılacağı söylendi)
 ```
 empowerd tx staking create-validator \
