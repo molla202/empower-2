@@ -67,10 +67,10 @@ sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persisten
 # set custom ports in app.toml
 sed -i.bak -e "s%^address = \"tcp://0.0.0.0:1317\"%address = \"tcp://0.0.0.0:${EMPOWER_PORT}317\"%;
 s%^address = \":8080\"%address = \":${EMPOWER_PORT}080\"%;
-s%^address = \"0.0.0.0:9090\"%address = \"0.0.0.0:${EMPOWER_PORT}090\"%; 
-s%^address = \"0.0.0.0:9091\"%address = \"0.0.0.0:${EMPOWER_PORT}091\"%; 
-s%^address = \"0.0.0.0:8545\"%address = \"0.0.0.0:${EMPOWER_PORT}545\"%; 
-s%^ws-address = \"0.0.0.0:8546\"%ws-address = \"0.0.0.0:${EMPOWER_PORT}546\"%" $HOME/.empowerchain/config/app.toml
+s%^address = \"localhost:9090\"%address = \"0.0.0.0:${EMPOWER_PORT}090\"%; 
+s%^address = \"localhost:9091\"%address = \"0.0.0.0:${EMPOWER_PORT}091\"%; 
+s%^address = \"localhost:8545\"%address = \"0.0.0.0:${EMPOWER_PORT}545\"%; 
+s%^ws-address = \"localhost:8546\"%ws-address = \"0.0.0.0:${EMPOWER_PORT}546\"%" $HOME/.empowerchain/config/app.toml
 
 # set custom ports in config.toml file
 sed -i.bak -e "s%^proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${EMPOWER_PORT}658\"%; 
