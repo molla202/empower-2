@@ -119,6 +119,21 @@ sudo systemctl daemon-reload
 sudo systemctl enable empowerd
 sudo systemctl restart empowerd && sudo journalctl -u empowerd -f -o cat
 ```
+
+# cüzdan olusturma yada import etme
+```
+empowerd keys add cüzdan-adı
+```
+# import
+```
+empowerd keys add cüzdan-adı --recover
+```
+# cüzdan sorgulama
+```
+empowerd keys list
+```
+
+
 ### Senkronize olmayı bekleyin ardından validatör oluşturun (not: faucetin bir kaç gün içinde açılacağı söylendi)
 ```
 empowerd tx staking create-validator \
