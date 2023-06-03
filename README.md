@@ -23,6 +23,7 @@ sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bs
 <h1 align="center"> Go kurulumu </h1>
 
 ```sh
+cd $HOME
 sudo rm -rf /usr/local/go
 wget https://golang.org/dl/go1.20.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
