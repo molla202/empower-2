@@ -159,6 +159,15 @@ sudo systemctl restart empowerd
 ```
 journalctl -u empowerd -f -o cat
 ```
+# silme komutları
+```
+sudo systemctl stop empowerd
+sudo systemctl disable empowerd
+sudo rm -rf /etc/systemd/system/empowerd.service
+sudo rm $(which empowerd)
+sudo rm -rf $HOME/.empowerchain
+sed -i "/EMPOWER_/d" $HOME/.bash_profile
+```
 # Sadece port değiştirmek isteyenler
 
 # Port Atama (izmir ayarladım isteyen 35 değiştirsin)
