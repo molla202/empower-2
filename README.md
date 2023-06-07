@@ -159,6 +159,18 @@ sudo systemctl restart empowerd
 ```
 journalctl -u empowerd -f -o cat
 ```
+# edit validator 
+```
+empowerd tx staking edit-validator \
+--commission-rate 0.1 \
+--new-moniker "$MONIKER" \
+--identity "" \
+--details "comolokko" \
+--from $WALLET \
+--chain-id circulus-1 \
+--gas auto --gas-adjustment 1.5 \
+-y
+```
 # silme komutları
 ```
 sudo systemctl stop empowerd
