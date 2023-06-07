@@ -168,6 +168,39 @@ sudo rm $(which empowerd)
 sudo rm -rf $HOME/.empowerchain
 sed -i "/EMPOWER_/d" $HOME/.bash_profile
 ```
+
+# ödülleri talep et
+```
+empowerd tx distribution withdraw-all-rewards --from $WALLET --chain-id circulus-1 --gas auto --gas-adjustment 1.5
+```
+# ödülleri ve komisyonları talep et validator
+```
+empowerd tx distribution withdraw-rewards $VALOPER_ADDRESS --from $WALLET --commission --chain-id circulus-1 --gas auto --gas-adjustment 1.5 -y
+```
+# ne kadar mangır var
+```
+empowerd query bank balances $WALLET_ADDRESS
+```
+# kendine delege et ( $(empowerd keys show $WALLET --bech val -a) kendi valoperınızı kod çağırır valoper yazmıcaz  cüzdna yazıcaz sadece )
+```
+empowerd tx staking delegate $(empowerd keys show $WALLET --bech val -a) 1000000umpwr --from $WALLET --chain-id circulus-1 --gas auto --gas-adjustment 1.5 -y
+```
+# düz Delegate ( kendinize edicekseniz valoper yazıcanız yada baskasına edicekseniz onu  tabi cüzdanda yazılcak )
+```
+empowerd tx staking delegate <TO_VALOPER_ADDRESS> 1000000umpwr --from $WALLET --chain-id circulus-1 --gas auto --gas-adjustment 1.5 -y
+```
+# bi fakirden baska fakire redelege
+```
+empowerd tx staking redelegate $VALOPER_ADDRESS <TO_VALOPER_ADDRESS> 1000000umpwr --from $WALLET --chain-id circulus-1 --gas auto --gas-adjustment 1.5 -y
+```
+$ Unbond tüm malları geri çek
+```
+empowerd tx staking unbond $(empowerd keys show $WALLET --bech val -a) 1000000umpwr --from $WALLET --chain-id circulus-1 --gas auto --gas-adjustment 1.5 -y
+```
+# baskasına coin yollama 
+```
+empowerd tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 1000000umpwr --gas auto --gas-adjustment 1.5 -y
+```
 # Sadece port değiştirmek isteyenler
 
 # Port Atama (izmir ayarladım isteyen 35 değiştirsin)
