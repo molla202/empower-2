@@ -1,3 +1,5 @@
+```
+sudo systemctl stop empowerd
 cd $HOME
 rm -rf empowerchain
 git clone https://github.com/EmpowerPlastic/empowerchain
@@ -7,9 +9,9 @@ cd chain
 make build
 sudo mv $HOME/empowerchain/chain/build/empowerd $(which empowerd)
 sudo systemctl restart empowerd && sudo journalctl -u empowerd -f
-
-
-
+```
+### Ardından ctrl+c durduralım snap atalım
+```
 sudo systemctl stop empowerd
 
 cp $HOME/.empowerchain/data/priv_validator_state.json $HOME/.empowerchain/priv_validator_state.json.backup
@@ -20,3 +22,4 @@ curl https://testnet-files.itrocket.net/empower/snap_empower.tar.lz4 | lz4 -dc -
 mv $HOME/.empowerchain/priv_validator_state.json.backup $HOME/.empowerchain/data/priv_validator_state.json
 
 sudo systemctl restart empowerd && sudo journalctl -u empowerd -f
+```
